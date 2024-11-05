@@ -52,11 +52,6 @@ func importData(metricName string, reqName string, filter string, startTime int6
 			log.Error("Could not read next data block: ", err)
 			return DeltaCountMetrics{}, err
 		}
-
-		// // Pretty print response
-		// jcart, _ := json.MarshalIndent(resp, "", "\t")
-		// log.Println("Response = \n", string(jcart))
-
 		for _, point := range resp.Points {
 			metricValue := FromPointToMetricValue(point)
 			metricValues = append(metricValues, metricValue)
