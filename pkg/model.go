@@ -4,11 +4,19 @@ import (
 	"cloud.google.com/go/monitoring/apiv3/v2/monitoringpb"
 )
 
+// L4 proxy metrics
+type L4ProxyMetrics struct {
+	NewConn    DeltaCountMetrics
+	ClosedConn DeltaCountMetrics
+	Egress     DeltaCountMetrics
+	Ingress    DeltaCountMetrics
+	Attributes map[string]string
+}
+
 // Delta count metric.
 type DeltaCountMetrics struct {
-	Name       string
-	Values     []DeltaCountMetricValue
-	Attributes map[string]any
+	Name   string
+	Values []DeltaCountMetricValue
 }
 
 // Delta count metric.

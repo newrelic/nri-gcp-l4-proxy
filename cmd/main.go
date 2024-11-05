@@ -72,11 +72,12 @@ func main() {
 
 	// log.Println("-------- NR INFRA OUTPUT --------")
 
-	pkg.ExportData([]*pkg.DeltaCountMetrics{
-		&newConnectionsMetrics,
-		&closedConnectionsMetrics,
-		&egressBytesMetrics,
-		&ingressBytesMetrics,
+	pkg.ExportData(&pkg.L4ProxyMetrics{
+		NewConn:    newConnectionsMetrics,
+		ClosedConn: closedConnectionsMetrics,
+		Egress:     egressBytesMetrics,
+		Ingress:    ingressBytesMetrics,
+		Attributes: map[string]string{}, //TODO: populate attributes from the response
 	})
 }
 

@@ -63,9 +63,8 @@ func importData(metricName string, reqName string, filter string, startTime int6
 		}
 	}
 	metrics := DeltaCountMetrics{
-		Name:       metricName,
-		Values:     metricValues,
-		Attributes: map[string]any{}, //TODO: populate attributes from the response
+		Name:   metricName,
+		Values: metricValues,
 	}
 
 	return metrics, nil

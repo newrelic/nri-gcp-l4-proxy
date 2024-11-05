@@ -15,7 +15,7 @@ const entityName = "gcp:l4_proxy"
 const entityType = "LoadBalancer"
 const entityDisplay = "Google Cloud L4 Proxy Load Balancer Metrics"
 
-func ExportData(data []*DeltaCountMetrics) error {
+func ExportData(data *L4ProxyMetrics) error {
 
 	// Create integration
 	i, err := integration.New(integrationName, integrationVersion)
@@ -32,11 +32,14 @@ func ExportData(data []*DeltaCountMetrics) error {
 	}
 
 	// Add metrics
-	for _, metrics := range data {
-		for _, d := range metrics.Values {
-			count, _ := integration.Count(time.UnixMilli(d.Interval.EndTime), metrics.Name, float64(d.Value))
-			entity.AddMetric(count)
-		}
+	addMetrics(entity, &data.NewConn)
+	addMetrics(entity, &data.ClosedConn)
+	addMetrics(entity, &data.Egress)
+	addMetrics(entity, &data.Ingress)
+
+	// Define common attributes
+	for key, val := range data.Attributes {
+		entity.AddCommonDimension(key, val)
 	}
 
 	//TODO: define inventory with load balancer metadata provided in the API response
@@ -50,4 +53,12 @@ func ExportData(data []*DeltaCountMetrics) error {
 	}
 
 	return nil
+}
+
+// Add metrics
+func addMetrics(entity *integration.Entity, metrics *DeltaCountMetrics) {
+	for _, d := range metrics.Values {
+		count, _ := integration.Count(time.UnixMilli(d.Interval.EndTime), metrics.Name, float64(d.Value))
+		entity.AddMetric(count)
+	}
 }
