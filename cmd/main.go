@@ -12,6 +12,8 @@ import (
 
 type argumentList struct {
 	sdkArgs.DefaultArgumentList
+	Name     string `default:"" help:"Google Cloud project, organization or folder name. Example: 'projects/my-project-555555'"`
+	FilePath string `default:"" help:"Service account JSON file path, used for JWT authentication."`
 }
 
 var (
@@ -36,15 +38,21 @@ func main() {
 	endTime := int64(1729593390)
 	filePath := "/Users/asantaren/Desktop/key-default-compute-labs-team-333620-9101aa490097.json"
 
-	// Required by Google Cloud Monitoring library to perform tje JWT authentication
-	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", filePath)
-
 	// Create integration
 	i, err := integration.New(integrationName, integrationVersion, integration.Args(&args))
 	if err != nil {
 		log.Error("Error creating Nr Infra integration", err)
 		os.Exit(1)
 	}
+
+	// projectName := args.Name
+	// filePath := args.FilePath
+	// //TODO: time interval
+	// startTime := int64(1729593091)
+	// endTime := int64(1729593390)
+
+	// Required by Google Cloud Monitoring library to perform the JWT authentication
+	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", filePath)
 
 	// Create entity
 	entity, err := i.NewEntity(entityName, entityType, entityDisplay)
