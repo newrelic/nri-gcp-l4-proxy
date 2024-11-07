@@ -11,6 +11,27 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const (
+	IntegrationName    = "gcp_l4_proxy_metrics"
+	IntegrationVersion = "0.1.0"
+	EntityName         = "gcp:l4_proxy"
+	EntityType         = "LoadBalancer"
+	EntityDisplay      = "Google Cloud L4 Proxy Load Balancer Metrics"
+)
+
+const (
+	ErrNewIntegration         = 1
+	ErrNewEntity              = iota
+	ErrArgTimes               = iota
+	ErrArgName                = iota
+	ErrArgFilePath            = iota
+	ErrImportMetricNewConn    = iota
+	ErrImportMetricClosedConn = iota
+	ErrImportMetricEgress     = iota
+	ErrImportMetricIngress    = iota
+	ErrPublish                = iota
+)
+
 type argumentList struct {
 	sdkArgs.DefaultArgumentList
 	Name      string `default:"" help:"Google Cloud project, organization or folder name. Example: 'projects/my-project-555555'"`
@@ -24,20 +45,12 @@ var (
 	args argumentList
 )
 
-const (
-	integrationName    = "gcp_l4_proxy_metrics"
-	integrationVersion = "0.1.0"
-	entityName         = "gcp:l4_proxy"
-	entityType         = "LoadBalancer"
-	entityDisplay      = "Google Cloud L4 Proxy Load Balancer Metrics"
-)
-
 func main() {
 	// Create integration
-	i, err := integration.New(integrationName, integrationVersion, integration.Args(&args))
+	i, err := integration.New(IntegrationName, IntegrationVersion, integration.Args(&args))
 	if err != nil {
 		log.Error("Error creating Nr Infra integration = ", err)
-		os.Exit(1)
+		os.Exit(ErrNewIntegration)
 	}
 
 	// Build args
@@ -54,17 +67,27 @@ func main() {
 		startTime = int64(args.StartTime)
 	} else {
 		log.Error("Either start/end times or time_frame must be set and bigger than zero.")
-		os.Exit(2)
+		os.Exit(ErrArgTimes)
+	}
+
+	if projectName == "" {
+		log.Error("Name must be defined.")
+		os.Exit(ErrArgName)
+	}
+
+	if filePath == "" {
+		log.Error("File path must be defined.")
+		os.Exit(ErrArgFilePath)
 	}
 
 	// Required by Google Cloud Monitoring library to perform the JWT authentication
 	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", filePath)
 
 	// Create entity
-	entity, err := i.NewEntity(entityName, entityType, entityDisplay)
+	entity, err := i.NewEntity(EntityName, EntityType, EntityDisplay)
 	if err != nil {
 		log.Error("Error creating entity", err)
-		os.Exit(3)
+		os.Exit(ErrNewEntity)
 	}
 
 	// Create Metrics
@@ -76,7 +99,7 @@ func main() {
 		)
 		if err != nil {
 			log.Error("Error reading new connections metric = ", err)
-			os.Exit(4)
+			os.Exit(ErrImportMetricNewConn)
 		}
 
 		closedConnectionsMetrics, err := pkg.ReadClosedConnectionsMetric(
@@ -86,7 +109,7 @@ func main() {
 		)
 		if err != nil {
 			log.Error("Error reading closed connections metric = ", err)
-			os.Exit(5)
+			os.Exit(ErrImportMetricClosedConn)
 		}
 
 		egressBytesMetrics, err := pkg.ReadEgressBytesMetric(
@@ -96,7 +119,7 @@ func main() {
 		)
 		if err != nil {
 			log.Error("Error reading egress bytes metric = ", err)
-			os.Exit(6)
+			os.Exit(ErrImportMetricEgress)
 		}
 
 		ingressBytesMetrics, err := pkg.ReadIngressBytesMetric(
@@ -106,7 +129,7 @@ func main() {
 		)
 		if err != nil {
 			log.Error("Error reading ingress bytes metric = ", err)
-			os.Exit(7)
+			os.Exit(ErrImportMetricIngress)
 		}
 
 		pkg.ExportMetrics(entity, &pkg.L4ProxyMetrics{
@@ -124,8 +147,8 @@ func main() {
 
 	err = i.Publish()
 	if err != nil {
-		log.Error("Error publishing", err)
-		os.Exit(8)
+		log.Error("Error publishing = ", err)
+		os.Exit(ErrPublish)
 	}
 }
 
