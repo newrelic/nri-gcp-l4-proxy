@@ -25,4 +25,5 @@ go.work.sum
 .env
 
 /cmd/cmd
+/cmd/bin
 .DS_Store
