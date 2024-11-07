@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"gcp-l4-proxy-monitoring/pkg"
 	"os"
+	"time"
 
 	sdkArgs "github.com/newrelic/infra-integrations-sdk/v4/args"
 	"github.com/newrelic/infra-integrations-sdk/v4/integration"
@@ -12,8 +13,11 @@ import (
 
 type argumentList struct {
 	sdkArgs.DefaultArgumentList
-	Name     string `default:"" help:"Google Cloud project, organization or folder name. Example: 'projects/my-project-555555'"`
-	FilePath string `default:"" help:"Service account JSON file path, used for JWT authentication."`
+	Name      string `default:"" help:"Google Cloud project, organization or folder name. Example: 'projects/my-project-555555'"`
+	FilePath  string `default:"" help:"Service account JSON file path, used for JWT authentication."`
+	Since     int    `default:"0" help:"Time frame of the request in seconds, starting from now. If set, start_time and end_time will be ignored."`
+	StartTime int    `default:"0" help:"Start time in UNIX epoch, seconds."`
+	EndTime   int    `default:"0" help:"End time in UNIX epoch, seconds."`
 }
 
 var (
@@ -29,27 +33,29 @@ const (
 )
 
 func main() {
-	//TODO: get from config:
-	// - Time range (actually scheduling time)
-	// - Project name
-	// - JSON file path
-	projectName := "projects/labs-team-333620"
-	startTime := int64(1729593091)
-	endTime := int64(1729593390)
-	filePath := "/Users/asantaren/Desktop/key-default-compute-labs-team-333620-9101aa490097.json"
-
 	// Create integration
 	i, err := integration.New(integrationName, integrationVersion, integration.Args(&args))
 	if err != nil {
-		log.Error("Error creating Nr Infra integration", err)
+		log.Error("Error creating Nr Infra integration = ", err)
 		os.Exit(1)
 	}
 
-	// projectName := args.Name
-	// filePath := args.FilePath
-	// //TODO: time interval
-	// startTime := int64(1729593091)
-	// endTime := int64(1729593390)
+	// Build args
+	projectName := args.Name
+	filePath := args.FilePath
+	var startTime int64
+	var endTime int64
+
+	if args.Since > 0 {
+		endTime = time.Now().Unix()
+		startTime = endTime - int64(args.Since)
+	} else if args.EndTime > 0 && args.StartTime > 0 {
+		endTime = int64(args.EndTime)
+		startTime = int64(args.StartTime)
+	} else {
+		log.Error("Either start/end times or time_frame must be set and bigger than zero.")
+		os.Exit(2)
+	}
 
 	// Required by Google Cloud Monitoring library to perform the JWT authentication
 	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", filePath)
@@ -58,7 +64,7 @@ func main() {
 	entity, err := i.NewEntity(entityName, entityType, entityDisplay)
 	if err != nil {
 		log.Error("Error creating entity", err)
-		os.Exit(2)
+		os.Exit(3)
 	}
 
 	// Create Metrics
@@ -70,7 +76,7 @@ func main() {
 		)
 		if err != nil {
 			log.Error("Error reading new connections metric = ", err)
-			os.Exit(3)
+			os.Exit(4)
 		}
 
 		closedConnectionsMetrics, err := pkg.ReadClosedConnectionsMetric(
@@ -80,7 +86,7 @@ func main() {
 		)
 		if err != nil {
 			log.Error("Error reading closed connections metric = ", err)
-			os.Exit(4)
+			os.Exit(5)
 		}
 
 		egressBytesMetrics, err := pkg.ReadEgressBytesMetric(
@@ -90,7 +96,7 @@ func main() {
 		)
 		if err != nil {
 			log.Error("Error reading egress bytes metric = ", err)
-			os.Exit(5)
+			os.Exit(6)
 		}
 
 		ingressBytesMetrics, err := pkg.ReadIngressBytesMetric(
@@ -100,7 +106,7 @@ func main() {
 		)
 		if err != nil {
 			log.Error("Error reading ingress bytes metric = ", err)
-			os.Exit(6)
+			os.Exit(7)
 		}
 
 		pkg.ExportData(entity, &pkg.L4ProxyMetrics{
@@ -117,7 +123,7 @@ func main() {
 	err = i.Publish()
 	if err != nil {
 		log.Error("Error publishing", err)
-		os.Exit(7)
+		os.Exit(8)
 	}
 }
 
