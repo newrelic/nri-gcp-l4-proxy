@@ -109,7 +109,7 @@ func main() {
 			os.Exit(7)
 		}
 
-		pkg.ExportData(entity, &pkg.L4ProxyMetrics{
+		pkg.ExportMetrics(entity, &pkg.L4ProxyMetrics{
 			NewConn:    newConnectionsMetrics,
 			ClosedConn: closedConnectionsMetrics,
 			Egress:     egressBytesMetrics,
@@ -117,6 +117,8 @@ func main() {
 			Attributes: map[string]string{}, //TODO: populate attributes from the response
 		})
 	}
+
+	//TODO: define inventory with load balancer metadata provided in the API response
 
 	i.AddEntity(entity)
 

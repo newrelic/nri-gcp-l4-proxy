@@ -18,7 +18,7 @@ import (
 // startTime: star time in seconds (unix epoch)
 // endTime: star time in seconds (unix epoch)
 // return: time series data or error
-func importData(metricName string, reqName string, filter string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
+func importMetrics(metricName string, reqName string, filter string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
 	ctx := context.Background()
 	c, err := monitoring.NewMetricClient(ctx)
 	if err != nil {
@@ -67,7 +67,7 @@ func importData(metricName string, reqName string, filter string, startTime int6
 
 // Read l4_proxy/tcp/new_connections_count metric.
 func ReadNewConnectionsMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
-	return importData(
+	return importMetrics(
 		"new_connections",
 		name,
 		"metric.type = \"loadbalancing.googleapis.com/l4_proxy/tcp/new_connections_count\"",
@@ -78,7 +78,7 @@ func ReadNewConnectionsMetric(name string, startTime int64, endTime int64) (Delt
 
 // Read l4_proxy/tcp/closed_connections_count metric.
 func ReadClosedConnectionsMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
-	return importData(
+	return importMetrics(
 		"closed_connections",
 		name,
 		"metric.type = \"loadbalancing.googleapis.com/l4_proxy/tcp/closed_connections_count\"",
@@ -89,7 +89,7 @@ func ReadClosedConnectionsMetric(name string, startTime int64, endTime int64) (D
 
 // Read l4_proxy/egress_bytes_count metric.
 func ReadEgressBytesMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
-	return importData(
+	return importMetrics(
 		"egress_bytes",
 		name,
 		"metric.type = \"loadbalancing.googleapis.com/l4_proxy/egress_bytes_count\"",
@@ -100,7 +100,7 @@ func ReadEgressBytesMetric(name string, startTime int64, endTime int64) (DeltaCo
 
 // Read l4_proxy/ingress_bytes_count metric.
 func ReadIngressBytesMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
-	return importData(
+	return importMetrics(
 		"ingress_bytes",
 		name,
 		"metric.type = \"loadbalancing.googleapis.com/l4_proxy/ingress_bytes_count\"",

@@ -8,7 +8,7 @@ import (
 	"github.com/newrelic/infra-integrations-sdk/v4/integration"
 )
 
-func ExportData(entity *integration.Entity, data *L4ProxyMetrics) error {
+func ExportMetrics(entity *integration.Entity, data *L4ProxyMetrics) error {
 	// Add metrics
 	err := addMetrics(entity, &data.NewConn)
 	if err != nil {
@@ -31,8 +31,6 @@ func ExportData(entity *integration.Entity, data *L4ProxyMetrics) error {
 	for key, val := range data.Attributes {
 		entity.AddCommonDimension(key, val)
 	}
-
-	//TODO: define inventory with load balancer metadata provided in the API response
 
 	return nil
 }
