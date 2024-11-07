@@ -21,15 +21,15 @@ const (
 
 const (
 	ErrNewIntegration         = 1
-	ErrNewEntity              = iota
-	ErrArgTimes               = iota
-	ErrArgName                = iota
-	ErrArgFilePath            = iota
-	ErrImportMetricNewConn    = iota
-	ErrImportMetricClosedConn = iota
-	ErrImportMetricEgress     = iota
-	ErrImportMetricIngress    = iota
-	ErrPublish                = iota
+	ErrNewEntity              = 2
+	ErrArgTimes               = 3
+	ErrArgName                = 4
+	ErrArgFilePath            = 5
+	ErrImportMetricNewConn    = 6
+	ErrImportMetricClosedConn = 7
+	ErrImportMetricEgress     = 8
+	ErrImportMetricIngress    = 9
+	ErrPublish                = 10
 )
 
 type argumentList struct {

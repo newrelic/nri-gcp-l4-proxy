@@ -68,7 +68,7 @@ func importMetrics(metricName string, reqName string, filter string, startTime i
 // Read l4_proxy/tcp/new_connections_count metric.
 func ReadNewConnectionsMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
 	return importMetrics(
-		"new_connections",
+		"gcp.l4_proxy.new_connections",
 		name,
 		"metric.type = \"loadbalancing.googleapis.com/l4_proxy/tcp/new_connections_count\"",
 		startTime,
@@ -79,7 +79,7 @@ func ReadNewConnectionsMetric(name string, startTime int64, endTime int64) (Delt
 // Read l4_proxy/tcp/closed_connections_count metric.
 func ReadClosedConnectionsMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
 	return importMetrics(
-		"closed_connections",
+		"gcp.l4_proxy.closed_connections",
 		name,
 		"metric.type = \"loadbalancing.googleapis.com/l4_proxy/tcp/closed_connections_count\"",
 		startTime,
@@ -90,7 +90,7 @@ func ReadClosedConnectionsMetric(name string, startTime int64, endTime int64) (D
 // Read l4_proxy/egress_bytes_count metric.
 func ReadEgressBytesMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
 	return importMetrics(
-		"egress_bytes",
+		"gcp.l4_proxy.egress_bytes",
 		name,
 		"metric.type = \"loadbalancing.googleapis.com/l4_proxy/egress_bytes_count\"",
 		startTime,
@@ -101,7 +101,7 @@ func ReadEgressBytesMetric(name string, startTime int64, endTime int64) (DeltaCo
 // Read l4_proxy/ingress_bytes_count metric.
 func ReadIngressBytesMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
 	return importMetrics(
-		"ingress_bytes",
+		"gcp.l4_proxy.ingress_bytes",
 		name,
 		"metric.type = \"loadbalancing.googleapis.com/l4_proxy/ingress_bytes_count\"",
 		startTime,
