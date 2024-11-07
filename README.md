@@ -6,22 +6,23 @@ New Relic Infraestructure Agent integration for Google Cloud L4 Proxy metrics.
 
 ## Installation
 
-> [Include a step-by-step procedure on how to get your code installed. Be sure to include any third-party dependencies that need to be installed separately]
-
-## Getting Started
->[Simple steps to start working with the software similar to a "Hello World"]
+TODO: Download the pre-generated binaries or go to the [Building](#building) section first.
 
 ## Usage
->[**Optional** - Include more thorough instructions on how to use the software. This section might not be needed if the Getting Started section is enough. Remove this section if it's not needed.]
 
+TODO
 
 ## Building
 
->[**Optional** - Include this section if users will need to follow specific instructions to build the software from source. Be sure to include any third party build dependencies that need to be installed separately. Remove this section if it's not needed.]
+Prerequisites:
+- Go lang 1.21 or higher.
+- GNU Make.
 
-## Testing
+Steps:
+- Clone this repo and open a terminal in the folder where you cloned it.
+- Run `make`.
 
->[**Optional** - Include instructions on how to run tests if we include tests with the codebase. Remove this section if it's not needed.]
+The generated binaries will be located at `cmd/bin/`. Choose the one for your operating system and architecture.
 
 ## Support
 

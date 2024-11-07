@@ -66,12 +66,12 @@ func main() {
 		endTime = int64(args.EndTime)
 		startTime = int64(args.StartTime)
 	} else {
-		log.Error("Either start/end times or time_frame must be set and bigger than zero.")
+		log.Error("Either parameters 'start_time' / 'end_time' or 'since' must be defined and be bigger than zero.")
 		os.Exit(ErrArgTimes)
 	}
 
 	if projectName == "" {
-		log.Error("Name must be defined.")
+		log.Error("Parameter 'name' must be defined.")
 		os.Exit(ErrArgName)
 	}
 
