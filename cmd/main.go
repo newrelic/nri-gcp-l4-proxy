@@ -1,14 +1,14 @@
 package main
 
 import (
-	"encoding/json"
 	"gcp-l4-proxy-monitoring/pkg"
 	"os"
 	"time"
 
 	sdkArgs "github.com/newrelic/infra-integrations-sdk/v4/args"
 	"github.com/newrelic/infra-integrations-sdk/v4/integration"
-	log "github.com/sirupsen/logrus"
+
+	"github.com/newrelic/infra-integrations-sdk/v4/log"
 )
 
 const (
@@ -92,7 +92,8 @@ func main() {
 
 	// Create Metrics
 	if args.All() || args.Metrics {
-		newConnectionsMetrics, err := pkg.ReadNewConnectionsMetric(
+		// All responses contain the same resource labels. Just using the first one.
+		newConnectionsMetrics, resourceLabels, err := pkg.ReadNewConnectionsMetric(
 			projectName,
 			startTime,
 			endTime,
@@ -102,7 +103,7 @@ func main() {
 			os.Exit(ErrImportMetricNewConn)
 		}
 
-		closedConnectionsMetrics, err := pkg.ReadClosedConnectionsMetric(
+		closedConnectionsMetrics, _, err := pkg.ReadClosedConnectionsMetric(
 			projectName,
 			startTime,
 			endTime,
@@ -112,7 +113,7 @@ func main() {
 			os.Exit(ErrImportMetricClosedConn)
 		}
 
-		egressBytesMetrics, err := pkg.ReadEgressBytesMetric(
+		egressBytesMetrics, _, err := pkg.ReadEgressBytesMetric(
 			projectName,
 			startTime,
 			endTime,
@@ -122,7 +123,7 @@ func main() {
 			os.Exit(ErrImportMetricEgress)
 		}
 
-		ingressBytesMetrics, err := pkg.ReadIngressBytesMetric(
+		ingressBytesMetrics, _, err := pkg.ReadIngressBytesMetric(
 			projectName,
 			startTime,
 			endTime,
@@ -137,11 +138,9 @@ func main() {
 			ClosedConn: closedConnectionsMetrics,
 			Egress:     egressBytesMetrics,
 			Ingress:    ingressBytesMetrics,
-			Attributes: map[string]string{}, //TODO: populate attributes from the response
+			Attributes: resourceLabels,
 		})
 	}
-
-	//TODO: define inventory with load balancer metadata provided in the API response
 
 	i.AddEntity(entity)
 
@@ -150,9 +149,4 @@ func main() {
 		log.Error("Error publishing = ", err)
 		os.Exit(ErrPublish)
 	}
-}
-
-func prettyPrint(metrics *pkg.DeltaCountMetrics) {
-	jcart, _ := json.MarshalIndent(metrics, "", "\t")
-	log.Println("Response = \n", string(jcart))
 }

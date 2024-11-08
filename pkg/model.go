@@ -33,16 +33,16 @@ type TimeInterval struct {
 	EndTime int64
 }
 
-func ConvertTimeInterval(interval *monitoringpb.TimeInterval) TimeInterval {
+func makeTimeInterval(interval *monitoringpb.TimeInterval) TimeInterval {
 	return TimeInterval{
 		StartTime: interval.StartTime.Seconds*1_000 + int64(interval.StartTime.Nanos)/1_000_000,
 		EndTime:   interval.EndTime.Seconds*1_000 + int64(interval.EndTime.Nanos)/1_000_000,
 	}
 }
 
-func FromPointToMetricValue(point *monitoringpb.Point) DeltaCountMetricValue {
+func MakeDeltaCountMetricValue(point *monitoringpb.Point) DeltaCountMetricValue {
 	return DeltaCountMetricValue{
-		Interval: ConvertTimeInterval(point.GetInterval()),
+		Interval: makeTimeInterval(point.GetInterval()),
 		Value:    point.GetValue().GetInt64Value(),
 	}
 }
