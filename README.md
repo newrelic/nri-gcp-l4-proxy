@@ -23,27 +23,29 @@ For more information about `l4_proxy` load balancer metrics, check out the offic
 
 ## Installation and Setup
 
-- Download the pre-generated binaries (TODO) or go through the [Building](#building) section first.
-- Place the binary file (`nri-gcp-l4-proxy`) in `/var/db/newrelic-infra/custom-integrations/`.
-- Copy the [sample configuration](./gcp-l4-proxy-config.yml) to `/etc/newrelic-infra/integrations.d/`.
-- Edit the config file and set the appropiate values for fields `interval`, `timeout`, `NAME`, `FILE_PATH`, and `SINCE`.
-
-GCP requirements:
+GCP prerequisites:
 
 - A service account in the same project of the L4 proxy.
 - Configure the service account with JWT authentication and get the key. [More info](https://developers.google.com/identity/protocols/oauth2/service-account#creatinganaccount).
 - Enable the *Monitoring Viewer* role for the service account. [More info](https://cloud.google.com/iam/docs/grant-role-console).
 
-New Relic requirements:
+New Relic prerequisites:
 
 - Infrastructure Agent installed and configured. [More info](https://docs.newrelic.com/docs/infrastructure/infrastructure-agent/linux-installation/package-manager-install/).
+
+Steps:
+
+1. Download the [pre-generated binaries](https://github.com/newrelic/nri-gcp-l4-proxy/releases) or go through the [Building](#building) section first.
+2. Place the binary file (`nri-gcp-l4-proxy`) in `/var/db/newrelic-infra/custom-integrations/`.
+3. Copy the [sample configuration](./gcp-l4-proxy-config.yml) to `/etc/newrelic-infra/integrations.d/`.
+4. Edit the config file and set the appropiate values for fields `interval`, `timeout`, `NAME`, `FILE_PATH`, and `SINCE`.
 
 ## Usage
 
 Once configured, the New Relic Infrastructure agent will automatically run the integration periodically and will ingest data. To visualize the generated metrics:
 
-- Open [NROne](https://one.newrelic.com).
-- In the left menu select "Metrics & Events", in the top selector click "Metrics", and filter by "gcp.l4_proxy".
+1. Open [NROne](https://one.newrelic.com).
+2. In the left menu select "Metrics & Events", in the top selector click "Metrics", and filter by "gcp.l4_proxy".
 
 ## Building
 
@@ -54,12 +56,12 @@ Prerequisites:
 
 Steps:
 
-- Clone this repo and open a terminal in the folder where you cloned it.
-- Run `make`.
+1. Clone this repo and open a terminal in the folder where you cloned it.
+2. Run `make`.
 
 The generated binaries will be located at `cmd/bin/`. Choose the one for your operating system and architecture.
 
-## Known limitationd
+## Known limitations
 
 - No metric deduplication. In certain cases (e.g. infra agent failure or reboot), duplicated data might be sent.
 
