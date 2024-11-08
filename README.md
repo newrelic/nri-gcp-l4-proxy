@@ -14,12 +14,32 @@ New Relic Infraestructure Agent integration for Google Cloud L4 Proxy metrics.
 
 | Name | Type | Description |
 |-|-|-|
-| `gcp.l4_proxy.new_connections` | Count | Number of connections that were openend. |
-| `gcp.l4_proxy.closed_connections` | Count | Number of connections that were terminated. |
-| `gcp.l4_proxy.egress_bytes` | Count | Number of bytes sent from VM to client using proxy. |
-| `gcp.l4_proxy.ingress_bytes` | Count | Number of bytes sent from client to VM using proxy. |
+| `gcp.l4_proxy.new_connections` | count | Number of connections that were openend. |
+| `gcp.l4_proxy.closed_connections` | count | Number of connections that were terminated. |
+| `gcp.l4_proxy.egress_bytes` | count | Number of bytes sent from VM to client using proxy. |
+| `gcp.l4_proxy.ingress_bytes` | count | Number of bytes sent from client to VM using proxy. |
 
 For more information about `l4_proxy` load balancer metrics, check out the official GCP [documentation](https://cloud.google.com/load-balancing/docs/metrics).
+
+### List of Attributes
+
+| Name | Type | Description |
+|-|-|-|
+| `project_id` | string | The identifier of the Google Cloud project associated with this resource, such as 'my-project'. |
+| `network_name` | string | The name of the customer network in which the Load Balancer resides. |
+| `region` | string | The region under which the Load Balancer is defined. |
+| `load_balancing_scheme` | string | The load balancing scheme associated with the forwarding rule, one of [INTERNAL_MANAGED, EXTERNAL_MANAGED]. |
+| `protocol` | string | The protocol associated with the traffic processed by the proxy, one of [TCP, UDP, SSL, UNKNOWN]. |
+| `forwarding_rule_name` | string | The name of the forwarding rule. |
+| `target_proxy_name` | string | The name of the target proxy. |
+| `backend_target_name` | string | The name of the backend target or service. |
+| `backend_target_type` | string | The type of the backend target, one of ['BACKEND_SERVICE'; 'UNKNOWN' - if the backend wasn't assigned]. |
+| `backend_name` | string | The name of the backend group. Can be '' if the backend wasn't assigned. |
+| `backend_type` | string | The type of the backend group, one of ['INSTANCE_GROUP'; 'NETWORK_ENDPOINT_GROUP'; 'UNKNOWN' - if the backend wasn't assigned]. |
+| `backend_scope` | string | The scope of the backend group. Can be 'UNKNOWN' if the backend wasn't assigned. |
+| `backend_scope_type` | string | The type of the scope of the backend group, one of ['ZONE'; 'REGION'; 'UNKNOWN' - in case the backend wasn't assigned].  |
+
+For more information about `l4_proxy_rule` load balancer metric attributes, check out the official GCP [documentation](https://cloud.google.com/monitoring/api/resources#tag_l4_proxy_rule).
 
 ## Installation and Setup
 
