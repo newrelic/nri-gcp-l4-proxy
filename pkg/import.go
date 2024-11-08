@@ -8,7 +8,6 @@ import (
 	monitoring "cloud.google.com/go/monitoring/apiv3/v2"
 	"cloud.google.com/go/monitoring/apiv3/v2/monitoringpb"
 	googlepb "github.com/golang/protobuf/ptypes/timestamp"
-	log "github.com/sirupsen/logrus"
 	"google.golang.org/api/iterator"
 )
 
@@ -18,12 +17,12 @@ import (
 // startTime: star time in seconds (unix epoch)
 // endTime: star time in seconds (unix epoch)
 // return: time series data or error
-func importData(metricName string, reqName string, filter string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
+func importMetrics(metricName string, reqName string, filter string, startTime int64, endTime int64) (DeltaCountMetrics, map[string]string, error) {
 	ctx := context.Background()
 	c, err := monitoring.NewMetricClient(ctx)
 	if err != nil {
-		log.Error("Could not crate metric client: ", err)
-		return DeltaCountMetrics{}, err
+		// Could not crate metric client
+		return DeltaCountMetrics{}, nil, err
 	}
 
 	interval := monitoringpb.TimeInterval{
@@ -43,17 +42,21 @@ func importData(metricName string, reqName string, filter string, startTime int6
 
 	it := c.ListTimeSeries(ctx, req)
 	metricValues := []DeltaCountMetricValue{}
+	var resourceLabels map[string]string
 	for {
 		resp, err := it.Next()
 		if err == iterator.Done {
 			break
 		}
 		if err != nil {
-			log.Error("Could not read next data block: ", err)
-			return DeltaCountMetrics{}, err
+			// Could not read next data block
+			return DeltaCountMetrics{}, nil, err
+		}
+		if len(metricValues) == 0 {
+			resourceLabels = resp.Resource.Labels
 		}
 		for _, point := range resp.Points {
-			metricValue := FromPointToMetricValue(point)
+			metricValue := MakeDeltaCountMetricValue(point)
 			metricValues = append(metricValues, metricValue)
 		}
 	}
@@ -62,13 +65,13 @@ func importData(metricName string, reqName string, filter string, startTime int6
 		Values: metricValues,
 	}
 
-	return metrics, nil
+	return metrics, resourceLabels, nil
 }
 
 // Read l4_proxy/tcp/new_connections_count metric.
-func ReadNewConnectionsMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
-	return importData(
-		"new_connections",
+func ReadNewConnectionsMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, map[string]string, error) {
+	return importMetrics(
+		"gcp.l4_proxy.new_connections",
 		name,
 		"metric.type = \"loadbalancing.googleapis.com/l4_proxy/tcp/new_connections_count\"",
 		startTime,
@@ -77,9 +80,9 @@ func ReadNewConnectionsMetric(name string, startTime int64, endTime int64) (Delt
 }
 
 // Read l4_proxy/tcp/closed_connections_count metric.
-func ReadClosedConnectionsMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
-	return importData(
-		"closed_connections",
+func ReadClosedConnectionsMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, map[string]string, error) {
+	return importMetrics(
+		"gcp.l4_proxy.closed_connections",
 		name,
 		"metric.type = \"loadbalancing.googleapis.com/l4_proxy/tcp/closed_connections_count\"",
 		startTime,
@@ -88,9 +91,9 @@ func ReadClosedConnectionsMetric(name string, startTime int64, endTime int64) (D
 }
 
 // Read l4_proxy/egress_bytes_count metric.
-func ReadEgressBytesMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
-	return importData(
-		"egress_bytes",
+func ReadEgressBytesMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, map[string]string, error) {
+	return importMetrics(
+		"gcp.l4_proxy.egress_bytes",
 		name,
 		"metric.type = \"loadbalancing.googleapis.com/l4_proxy/egress_bytes_count\"",
 		startTime,
@@ -99,9 +102,9 @@ func ReadEgressBytesMetric(name string, startTime int64, endTime int64) (DeltaCo
 }
 
 // Read l4_proxy/ingress_bytes_count metric.
-func ReadIngressBytesMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, error) {
-	return importData(
-		"ingress_bytes",
+func ReadIngressBytesMetric(name string, startTime int64, endTime int64) (DeltaCountMetrics, map[string]string, error) {
+	return importMetrics(
+		"gcp.l4_proxy.ingress_bytes",
 		name,
 		"metric.type = \"loadbalancing.googleapis.com/l4_proxy/ingress_bytes_count\"",
 		startTime,

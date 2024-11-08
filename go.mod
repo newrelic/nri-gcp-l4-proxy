@@ -4,7 +4,10 @@ go 1.21
 
 toolchain go1.23.2
 
-require github.com/newrelic/infra-integrations-sdk/v4 v4.2.1
+require (
+	github.com/golang/protobuf v1.5.4
+	github.com/newrelic/infra-integrations-sdk/v4 v4.2.1
+)
 
 require (
 	cloud.google.com/go/auth v0.9.9 // indirect
@@ -14,14 +17,12 @@ require (
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/golang/protobuf v1.5.4
 	github.com/google/s2a-go v0.1.8 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.4 // indirect
 	github.com/googleapis/gax-go/v2 v2.13.0 // indirect
 	github.com/newrelic/infra-integrations-sdk v3.8.2+incompatible // indirect
 	github.com/newrelic/infrastructure-agent v0.0.0-20201127092132-00ac7efc0cc6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/sirupsen/logrus v1.9.3 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.54.0 // indirect
 	go.opentelemetry.io/otel v1.29.0 // indirect

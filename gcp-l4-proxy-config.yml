@@ -1,0 +1,13 @@
+integrations:
+  - name: nri-gcp-l4-proxy
+    # Execution interval. Minimum 15 seconds.
+    interval: 5m
+    # Timeout, usually same as interval, or lower, but enough to ensure the integration can fetch the data from GCP.
+    timeout: 5m
+    env:
+      # GCP project where the L4 proxy was created
+      NAME: projects/my-project-555555
+      # Path to service account auhorization key
+      FILE_PATH: /path/to/key.json
+      # Time for metrics request, in seconds. It must match the "interval" configured before (5 minutes = 300 seconds).
+      SINCE: 300
