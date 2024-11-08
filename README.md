@@ -21,11 +21,12 @@ New Relic Infraestructure Agent integration for Google Cloud L4 Proxy metrics.
 
 For more information about `l4_proxy` load balancer metrics, check out the official GCP [documentation](https://cloud.google.com/load-balancing/docs/metrics).
 
-## Installation
+## Installation and Setup
 
 - Download the pre-generated binaries (TODO) or go through the [Building](#building) section first.
 - Place the binary file (`nri-gcp-l4-proxy`) in `/var/db/newrelic-infra/custom-integrations/`.
 - Copy the [sample configuration](./gcp-l4-proxy-config.yml) to `/etc/newrelic-infra/integrations.d/`.
+- Edit the config file and set the appropiate values for fields `interval`, `timeout`, `NAME`, `FILE_PATH`, and `SINCE`.
 
 GCP requirements:
 
@@ -57,6 +58,10 @@ Steps:
 - Run `make`.
 
 The generated binaries will be located at `cmd/bin/`. Choose the one for your operating system and architecture.
+
+## Known limitationd
+
+- No metric deduplication. In certain cases (e.g. infra agent failure or reboot), duplicated data might be sent.
 
 ## Support
 

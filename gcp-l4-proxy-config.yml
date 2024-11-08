@@ -2,6 +2,7 @@ integrations:
   - name: nri-gcp-l4-proxy
     # Execution interval. Minimum 15 seconds.
     interval: 5m
+    # Timeout, usually same as interval, or lower, but enough to ensure the integration can fetch the data from GCP.
     timeout: 5m
     env:
       # GCP project where the L4 proxy was created
